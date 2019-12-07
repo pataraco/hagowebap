@@ -1,0 +1,37 @@
+---
+common_tags: &common_tags
+  Environment: ${environment}
+  Project: ${project}
+  Provisioner: CloudFormation
+common_vars: &common_vars
+  Environment: ${environment}
+  Project: ${project}
+namespace: ${namespace_common}
+stacker_bucket: ${stacker_bucket_name}
+
+stacks:
+  - name: landing-zone-${environment}
+    enabled: true
+    template_path: templates/aws_landing_zone.yaml
+    tags:
+      <<: *common_tags
+    variables:
+      <<: *common_vars
+      PrivateSubnet1: ${private_subnet_1}
+      PrivateSubnet2: ${private_subnet_2}
+      # PrivateSubnet3: ${private_subnet_3}
+      PublicSubnet1: ${public_subnet_1}
+      PublicSubnet2: ${public_subnet_2}
+      # PublicSubnet3: ${public_subnet_3}
+      VpcCidr: ${vpc_cidr}
+
+  # create security group/rules for all resources to allow on-prem traffic
+  - name: securitygroup-and-ingress-rules-common-${environment}
+    template_path: templates/ec2_securitygroups_common.yaml
+    enabled: true
+    tags:
+      <<: *common_tags
+    variables:
+      <<: *common_vars
+      PremCidr1: ${prem_cidr_1}
+      VpcId: ${output landing-zone-${environment}::VpcId}
