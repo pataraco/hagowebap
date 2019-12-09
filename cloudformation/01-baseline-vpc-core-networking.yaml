@@ -10,9 +10,9 @@ namespace: ${namespace_common}
 stacker_bucket: ${stacker_bucket_name}
 
 stacks:
-  - name: landing-zone-${environment}
+  - name: baseline-vpc-core-networking-${environment}
     enabled: true
-    template_path: templates/aws_landing_zone.yaml
+    template_path: templates/aws_baseline_vpc_core_networking.yaml
     tags:
       <<: *common_tags
     variables:
@@ -34,4 +34,4 @@ stacks:
     variables:
       <<: *common_vars
       PremCidr1: ${prem_cidr_1}
-      VpcId: ${output landing-zone-${environment}::VpcId}
+      VpcId: ${output baseline-vpc-core-networking-${environment}::VpcId}
