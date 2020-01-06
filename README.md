@@ -19,11 +19,13 @@ The service must be able to be:
 
 ## Design Overview
 
-### Solution 1 (without containerization):
+### Solution 1: Dedicated Servers
+
+This is a pure AWS solution.
 
   - Infrastructure (Cloud)
     - Provider: AWS
-    - Provisioner: Terraform or CloudForrmation
+    - Provisioner: CloudFormation
     - Networking:
       - VPC: isolate/protect infrastructure
       - Public subnet: ALB and Jenkins server
@@ -62,32 +64,40 @@ The service must be able to be:
         - Security group allows HTTP/HTTPS traffic from all
     - ACM to manage SSL/TLS certificates for the web app
     - Route 53 to configure DNS with alias record to the ALB
-  - CI/CD
-    - CI: git (GitHub or CodeCommit)
+  - VCS/CI/CD
+    - VCS: git (GitHub or CodeCommit)
       - manage the application and infrastructure code.
       - With separate environment branches, e.g. dev, staging, prod
       - Test and promote from dev -> prod.
       - Feature branches used to test and submit PR’s.
       - PR’s merged on to specific branches and ultimately to prod/master for deployments
-    - CD: Jenkins/Jenkinsfile (or CodeBuild/CodeDeploy)
+    - CI/CD: CodeBuild/CodeDeploy/CodePipeline
       - configured to watch the code repo pushes/merges to prod/master branch
         - Or GitHub hooks to start Jenkins builds
       - Performs tests and deploy.
       - Tests can be automated or manual prompting for authorization to deploy.
       - Deployment by updating EC2 launch templates/configs and performing autoscaling rolling update
 
-### Solution 2 (with containerization - specifically kubernetes):
+### Solution 2: Containerization
 
 Similar to above design above, with the following exceptions
 
+  - Infrastructure (Cloud)
+    - Provisioner: Terraform
+  - Uses Kubernetes
   - Use EKS to deploy kubernetes master nodes
-  - k8s: Use “cluster-autoscaler” and horizontal pod autoscaler (hpa) to create the AWS auto scaling group and dynamically scale pods and worker nodes
-  - k8s: Use “alb-ingress-controller” k8s deployment to deploy the AWS ALB which will front the k8s worker nodes
-  - Jenkins to pull/test code and build/push images to a container repo (ECR/Docker Hub). Then if/when ready/approved to deploy, update the images of the web app k8s deployments and specify a rolling deployment.
-
-### Solution 3 (with containerization - AWS Fargate):
-
-  - Mostly the same as Solution 2, just replace all kubernetes components with ECS/Fargate
-  - Create the ALB as in Solution 1 to front the Fargate instances
   - Dynamic scaling of worker nodes handled by Fargate
-  - Jenkins would update ECS task definitions for deployments
+  - k8s: Use “cluster-autoscaler” and horizontal pod autoscaler (hpa) to create the AWS auto scaling group and dynamically scale pods and worker nodes
+  - k8s: Use “alb-ingress-controller” k8s deployment to deploy the AWS ALB which will front the Fargate k8s worker nodes
+  - VCS/CI/CD
+    - VCS: git (GitHub)
+    - CI/CD: Jenkins/Jenkinsfile
+    - Jenkins to pull/test code and build/push images to a container repo (ECR/Docker Hub). Then if/when ready/approved to deploy, update the images of the web app k8s deployments and specify a rolling deployment.
+
+### Solution 3: Serverless
+
+Similar to above design above, with the following exceptions
+
+  - Infrastructure (Cloud)
+    - Provisioner: CloudFormation
+  - Uses Serverless to deploy AWS REST API Gateway and associated AWS Lambda functions
