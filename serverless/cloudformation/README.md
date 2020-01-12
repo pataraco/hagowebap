@@ -59,10 +59,10 @@ Use `stacker` to build/deploy the stacks individually, the syntax is:
 `stacker build -i -r $REGION $ENVIRONMENT_FILE $YAML_FILE`
 ("-i" for interactive mode)
 
-So, for example to build the `landing-zone` stack for `dev` in `us-west-2`,
+So, for example to build the `landing-zone` stack for `dev` in `us-east-1`,
 run:
 
-`stacker build -i -r us-west-2 dev-us-west-2.env 01-landing-zone.yaml`
+`stacker build -i -r us-east-1 dev-us-east-1.env 01-landing-zone.yaml`
 
 ### Destroying
 
@@ -71,10 +71,10 @@ command, the syntax is:
 
 `stacker destroy -f|--force -r $REGION $ENVIRONMENT_FILE $YAML_FILE`
 
-So, for example to destroy the `landing-zone` stack for `dev` in `us-west-2`,
+So, for example to destroy the `landing-zone` stack for `dev` in `us-east-1`,
 run:
 
-`stacker destroy -f -r us-west-2 dev-us-west-2.env 01-landing-zone.yaml`
+`stacker destroy -f -r us-east-1 dev-us-east-1.env 01-landing-zone.yaml`
     
 You should destroy stacks in reverse order as they were created due to
 interdependencies.  You can look at the progress/status in the AWS console

@@ -1,0 +1,78 @@
+service: ${self:custom.project}
+
+plugins:
+  - serverless-offline              # API local testing
+  - serverless-pseudo-parameters    # Use CloudFormation pseudo parameters
+
+frameworkVersion: '>=1.28.0 <2.0.0'
+
+provider:
+  name: aws
+  runtime: go1.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  memorySize: 256
+  timeout: 15
+  environment:
+    ENVIRONMENT: ${self:provider.stage}
+  tags:
+    Environment: ${self:provider.stage}
+    Project: ${self:custom.project}
+    Provisioner: serverless
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'cloudwatch:GetMetricStatistics'
+        - 'cloudwatch:ListMetrics'
+      Resource: '*'
+
+package:
+  individually: true
+  exclude:
+    - ./**
+  include:
+    - ./bin/**
+
+custom:
+  project: hagowebapp
+
+functions:
+  foo:
+    handler: bin/foo
+    memorySize: 128
+    timeout: 30
+    environment:
+      VERSION: v0.0.0
+    vpc:
+      subnetIds:
+        - 'Fn::ImportValue': ${self:custom.project}-common-baseline-vpc-core-networking-${self:provider.stage}-PrivateSubnet1Id
+        - 'Fn::ImportValue': ${self:custom.project}-common-baseline-vpc-core-networking-${self:provider.stage}-PrivateSubnet2Id
+      securityGroupIds:
+        - 'Fn::ImportValue': ${self:custom.project}-common-securitygroup-and-ingress-rules-common-${self:provider.stage}-SgId
+    tags:
+      Name: ${self:custom.project}-foo-${self:provider.stage}
+    events:
+      - http:
+          path: /foo
+          method: get
+          cors: true
+  bar:
+    handler: bin/bar
+    environment:
+      VERSION: v0.0.0
+    vpc:
+      subnetIds:
+        - 'Fn::ImportValue': ${self:custom.project}-common-baseline-vpc-core-networking-${self:provider.stage}-PrivateSubnet1Id
+        - 'Fn::ImportValue': ${self:custom.project}-common-baseline-vpc-core-networking-${self:provider.stage}-PrivateSubnet2Id
+      securityGroupIds:
+        - 'Fn::ImportValue': ${self:custom.project}-common-securitygroup-and-ingress-rules-common-${self:provider.stage}-SgId
+    tags:
+      Name: ${self:custom.project}-bar-${self:provider.stage}
+    events:
+      - http:
+          path: /bar
+          method: post
+          cors: true
+
+resources:
+  Description: 'Creates Serverless resources: Lambda function(s) and REST API Gateway'

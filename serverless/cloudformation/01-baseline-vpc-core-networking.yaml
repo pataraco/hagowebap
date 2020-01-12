@@ -12,17 +12,15 @@ stacker_bucket: ${stacker_bucket_name}
 stacks:
   - name: baseline-vpc-core-networking-${environment}
     enabled: true
-    template_path: templates/aws_baseline_vpc_core_networking.yaml
+    template_path: templates/baseline_vpc_core_networking.yaml
     tags:
       <<: *common_tags
     variables:
       <<: *common_vars
       PrivateSubnet1: ${private_subnet_1}
       PrivateSubnet2: ${private_subnet_2}
-      # PrivateSubnet3: ${private_subnet_3}
       PublicSubnet1: ${public_subnet_1}
       PublicSubnet2: ${public_subnet_2}
-      # PublicSubnet3: ${public_subnet_3}
       VpcCidr: ${vpc_cidr}
 
   # create security group/rules for all resources to allow on-prem traffic
