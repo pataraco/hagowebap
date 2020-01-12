@@ -21,83 +21,12 @@ The service must be able to be:
 
 ### Solution 1: Dedicated Servers
 
-This is a pure AWS solution.
-
-  - Infrastructure (Cloud)
-    - Provider: AWS
-    - Provisioner: CloudFormation
-    - Networking:
-      - VPC: isolate/protect infrastructure
-      - Public subnet: ALB and Jenkins server
-      - Private subnet: Web Server(s)
-      - NAT GW: public internet access for web servers
-      - Security groups: control connectivity access
-    - Compute:
-      - EC2 - web server(s)
-        - Private subnet
-        - Auto scaled - outages, load, deployments
-        - Security group - access from ALB
-      - Auto Scaling groups:
-        - For Web Servers
-        - Used to roll out app updates with update EC2 launch templates/configs
-        - Scaling policy configured to dynamically scale out/in based on load (or other desired metric)
-        - Registered with an ALB and ELB health check - to automatically replace unhealthy web servers
-      - Launch template/config
-        - Specify server requirements/specs
-        - Place on private subnets
-        - Attach security groups
-        - Configure user data script to install necessary packages and pull/start correct/tagged application version from CI repo (GitHub/CodeCommit)
-      - EC2 - Jenkins server (CD)  (or can use CodeBuild/CodeDeploy)
-        - Public subnet for GitHub integration
-        - IAM role to give access to specify resources needed for deployments (as described below). Eliminates the need to use AWS keys.
-        - Security group to only allow traffic from GitHub and Office
-        - Can also use as a build server, or use plugins to dynamically launch build servers (spot instances or ECS/Fargate and containers)
-      - Load Balancing:
-        - ALB on a public subnet, with http/https listeners and target groups, allowing/providing:
-        - HA during application updates/rollouts
-        - SSL/TLS termination (ACM certs)
-        - HTTP redirection to HTTPS
-        - Authentication
-        - Host/Path based routing
-        - Public access to application
-        - Serves/Fronts the web servers (created by the auto scaling group)
-        - Security group allows HTTP/HTTPS traffic from all
-    - ACM to manage SSL/TLS certificates for the web app
-    - Route 53 to configure DNS with alias record to the ALB
-  - VCS/CI/CD
-    - VCS: git (GitHub or CodeCommit)
-      - manage the application and infrastructure code.
-      - With separate environment branches, e.g. dev, staging, prod
-      - Test and promote from dev -> prod.
-      - Feature branches used to test and submit PR’s.
-      - PR’s merged on to specific branches and ultimately to prod/master for deployments
-    - CI/CD: CodeBuild/CodeDeploy/CodePipeline
-      - configured to watch the code repo pushes/merges to prod/master branch
-        - Or GitHub hooks to start Jenkins builds
-      - Performs tests and deploy.
-      - Tests can be automated or manual prompting for authorization to deploy.
-      - Deployment by updating EC2 launch templates/configs and performing autoscaling rolling update
+This solution a pure AWS solution and uses CloudFormation, CodeCommit, CodeBuild, and CodePipeline to deploy and update the application in AWS. A VPC is used to isolate the resources. Please find [more information about the solution here](dedicated/README.md)
 
 ### Solution 2: Containerization
 
-Similar to above design above, with the following exceptions
-
-  - Infrastructure (Cloud)
-    - Provisioner: Terraform
-  - Uses Kubernetes
-  - Use EKS to deploy kubernetes master nodes
-  - Dynamic scaling of worker nodes handled by Fargate
-  - k8s: Use “cluster-autoscaler” and horizontal pod autoscaler (hpa) to create the AWS auto scaling group and dynamically scale pods and worker nodes
-  - k8s: Use “alb-ingress-controller” k8s deployment to deploy the AWS ALB which will front the Fargate k8s worker nodes
-  - VCS/CI/CD
-    - VCS: git (GitHub)
-    - CI/CD: Jenkins/Jenkinsfile
-    - Jenkins to pull/test code and build/push images to a container repo (ECR/Docker Hub). Then if/when ready/approved to deploy, update the images of the web app k8s deployments and specify a rolling deployment.
+This solution uses Terraform, Kubernetes and Jenkins to deploy and update the application in AWS. A VPC is used to isolate the resources. Please find [more information about the solution here](containerized/README.md)
 
 ### Solution 3: Serverless
 
-Similar to above design above, with the following exceptions
-
-  - Infrastructure (Cloud)
-    - Provisioner: CloudFormation
-  - Uses Serverless to deploy AWS REST API Gateway and associated AWS Lambda functions
+This solution uses both AWS CloudFormation and Serverless Framework to deploy AWS Lambda functions and an AWS REST API Gateway. A VPC is used to isolate the resources. Please find [more information about the solution here](serverless/README.md)
