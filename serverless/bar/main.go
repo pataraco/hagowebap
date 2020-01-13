@@ -1,13 +1,15 @@
 package main
 
 import (
-    "bytes"
-    "context"
-    "encoding/json"
-    "os"
+	"bytes"
+	"context"
+	"encoding/json"
+	"fmt"
+	"os"
 
-    "github.com/aws/aws-lambda-go/events"
-    "github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-lambda-go/events"
+	"github.com/aws/aws-lambda-go/lambda"
+	"github.com/aws/aws-lambda-go/lambdacontext"
 )
 
 // Response is of type APIGatewayProxyResponse since we're leveraging the
@@ -16,37 +18,46 @@ import (
 // https://serverless.com/framework/docs/providers/aws/events/apigateway/#lambda-proxy-integration
 type Response events.APIGatewayProxyResponse
 
-// Handler is our lambda handler invoked by the `lambda.Start` function call
-func Handler(ctx context.Context) (Response, error) {
-    var buf bytes.Buffer
+// Handler function Using AWS Lambda Proxy Request (invoked by the `lambda.Start`)
+func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (Response, error) {
+	if request.HTTPMethod != "POST" {
+		return Response{StatusCode: 405}, nil
+	}
 
-    body, err := json.Marshal(map[string]interface{}{
-        "application": "hagowebapp",
-        "body": ctx, // TODO: get actual body
-        "environment": os.Getenv("STAGE"),
-        "method": ctx, // TODO: get the actual method
-        "message": "bar function executed successfully!", // TODO: get function name
-        "provisioner": "Created with Serverless v1.0",
-        "runtime": "Go (go1.x)",
-        "version": "0.0.0",
-    })
-    if err != nil {
-        return Response{StatusCode: 404}, err
-    }
-    json.HTMLEscape(&buf, body)
+	var buf bytes.Buffer
 
-    resp := Response{
-        StatusCode: 200,
-        IsBase64Encoded: false,
-        Body: buf.String(),
-        Headers: map[string]string{
-            "Content-Type": "application/json",
-        },
-    }
+	lambda := fmt.Sprintf("%s (%s)", lambdacontext.FunctionName, lambdacontext.FunctionVersion)
+	fn := lambdacontext.FunctionName
 
-    return resp, nil
+	body, err := json.Marshal(map[string]interface{}{
+		"application": os.Getenv("APPLICATION"),
+		"body":        request.Body,
+		"environment": os.Getenv("ENVIRONMENT"),
+		"host":        request.Headers["Host"],
+		"lambda":      lambda,
+		"message":     fmt.Sprintf("%s function executed successfully!", fn),
+		"method":      request.HTTPMethod,
+		"provisioner": "Created with Serverless v1.0",
+		"runtime":     "Go (go1.x)",
+		"version":     "0.0.2",
+	})
+	if err != nil {
+		return Response{StatusCode: 404}, err
+	}
+	json.HTMLEscape(&buf, body)
+
+	resp := Response{
+		StatusCode:      200,
+		IsBase64Encoded: false,
+		Body:            buf.String(),
+		Headers: map[string]string{
+			"Content-Type": "application/json",
+		},
+	}
+
+	return resp, nil
 }
 
 func main() {
-    lambda.Start(Handler)
+	lambda.Start(Handler)
 }

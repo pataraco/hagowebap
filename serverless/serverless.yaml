@@ -1,4 +1,4 @@
-service: ${self:custom.project}
+service: ${self:custom.project}-backend
 
 plugins:
   - serverless-offline              # API local testing
@@ -14,8 +14,10 @@ provider:
   memorySize: 256
   timeout: 15
   environment:
+    APPLICATION: ${self:custom.project}
     ENVIRONMENT: ${self:provider.stage}
   tags:
+    Application: ${self:custom.project}
     Environment: ${self:provider.stage}
     Project: ${self:custom.project}
     Provisioner: serverless
@@ -34,7 +36,7 @@ package:
     - ./bin/**
 
 custom:
-  project: hagowebapp
+  project: hagowebapp-sls
 
 functions:
   foo:
@@ -45,34 +47,35 @@ functions:
       VERSION: v0.0.0
     vpc:
       subnetIds:
-        - 'Fn::ImportValue': ${self:custom.project}-common-baseline-vpc-core-networking-${self:provider.stage}-PrivateSubnet1Id
-        - 'Fn::ImportValue': ${self:custom.project}-common-baseline-vpc-core-networking-${self:provider.stage}-PrivateSubnet2Id
+        - 'Fn::ImportValue': ${self:custom.project}-baseline-vpc-core-networking-${self:provider.stage}-PrivateSubnet1Id
+        - 'Fn::ImportValue': ${self:custom.project}-baseline-vpc-core-networking-${self:provider.stage}-PrivateSubnet2Id
       securityGroupIds:
-        - 'Fn::ImportValue': ${self:custom.project}-common-securitygroup-and-ingress-rules-common-${self:provider.stage}-SgId
+        - 'Fn::ImportValue': ${self:custom.project}-securitygroup-and-ingress-rules-common-${self:provider.stage}-SgId
+
     tags:
       Name: ${self:custom.project}-foo-${self:provider.stage}
     events:
       - http:
-          path: /foo
+          path: foo
           method: get
-          cors: true
+          # cors: true
   bar:
     handler: bin/bar
     environment:
       VERSION: v0.0.0
     vpc:
       subnetIds:
-        - 'Fn::ImportValue': ${self:custom.project}-common-baseline-vpc-core-networking-${self:provider.stage}-PrivateSubnet1Id
-        - 'Fn::ImportValue': ${self:custom.project}-common-baseline-vpc-core-networking-${self:provider.stage}-PrivateSubnet2Id
+        - 'Fn::ImportValue': ${self:custom.project}-baseline-vpc-core-networking-${self:provider.stage}-PrivateSubnet1Id
+        - 'Fn::ImportValue': ${self:custom.project}-baseline-vpc-core-networking-${self:provider.stage}-PrivateSubnet2Id
       securityGroupIds:
-        - 'Fn::ImportValue': ${self:custom.project}-common-securitygroup-and-ingress-rules-common-${self:provider.stage}-SgId
+        - 'Fn::ImportValue': ${self:custom.project}-securitygroup-and-ingress-rules-common-${self:provider.stage}-SgId
     tags:
       Name: ${self:custom.project}-bar-${self:provider.stage}
     events:
       - http:
-          path: /bar
+          path: bar
           method: post
-          cors: true
+          # cors: true
 
 resources:
   Description: 'Creates Serverless resources: Lambda function(s) and REST API Gateway'

@@ -6,8 +6,8 @@ common_tags: &common_tags
 common_vars: &common_vars
   Environment: ${environment}
   Project: ${project}
-namespace: ${namespace_common}
-stacker_bucket: ${stacker_bucket_name}
+namespace: ${project}
+stacker_bucket: ${project}-cloudformation-${environment}
 
 stacks:
   - name: baseline-vpc-core-networking-${environment}
