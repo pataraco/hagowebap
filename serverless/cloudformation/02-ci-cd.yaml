@@ -1,0 +1,36 @@
+---
+common_tags: &common_tags
+  Environment: ${environment}
+  Project: ${project}
+  Provisioner: CloudFormation
+common_vars: &common_vars
+  Environment: ${environment}
+  Project: ${project}
+namespace: ${namespace}
+stacker_bucket: ${stacker_bucket_name}
+sys_path: ./
+
+stacks:
+
+  # create AWS CodeBuild project to deploy Lambda/API via Serverless
+  - name: codebuild-project-${environment}
+    template_path: templates/codebuild-project.yaml
+    enabled: true
+    tags:
+      <<: *common_tags
+    variables:
+      <<: *common_vars
+      BadgeEnabled: true
+      BuildSpec: buildspec.yaml
+      Description: ${namespace} serverless build and deployment for ${environment}
+      GitHubLocation: https://github.com/AutoGravity/turncar-backend-testing
+      Name: ${namespace}-${environment}
+      SourceVersion: ${environment}
+
+  - name: codepipeline-pipeline-${environment}
+    enabled: false
+    template_path: templates/codepipeline-pipeline.yaml
+    tags:
+      <<: *common_tags
+    variables:
+      <<: *common_vars
