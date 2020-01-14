@@ -28,7 +28,7 @@ stacks:
       SourceVersion: ${environment}
 
   - name: codepipeline-iam-managed-policy-${environment}
-    enabled: false
+    enabled: true
     template_path: templates/iam-managed-policy-codepipeline.yaml
     tags:
       <<: *common_tags

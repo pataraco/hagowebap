@@ -35,30 +35,6 @@ Resources:
                   - ec2.amazonaws.com
                   - ecs-tasks.amazonaws.com
                   - elasticbeanstalk.amazonaws.com
-          - Sid: CodeCommitLimitedAccess
-            Action:
-              - codecommit:CancelUploadArchive
-              - codecommit:GetBranch
-              - codecommit:GetCommit
-              - codecommit:GetUploadArchiveStatus
-              - codecommit:UploadArchive
-            Effect: Allow
-            Resource: ['*']
-          - Sid: CodeDeployLimitedAccess
-            Action:
-              - codedeploy:CreateDeployment
-              - codedeploy:GetApplication
-              - codedeploy:GetApplicationRevision
-              - codedeploy:GetDeployment
-              - codedeploy:GetDeploymentConfig
-              - codedeploy:RegisterApplicationRevision
-            Effect: Allow
-            Resource: ['*']
-          - Sid: CodeStarLimitedAccess
-            Action:
-              - codestar-connections:UseConnection
-            Effect: Allow
-            Resource: ['*']
           - Sid: FullAccessSpecificServices
             Action:
               - autoscaling:*
@@ -74,14 +50,31 @@ Resources:
               - sqs:*
             Effect: Allow
             Resource: ['*']
-          - Sid: LambdaLimitedAccess
+          - Sid: LimitedAccessSpecificServices
             Action:
+              - codebuild:BatchGetBuilds
+              - codebuild:StartBuild
+              - codecommit:CancelUploadArchive
+              - codecommit:GetBranch
+              - codecommit:GetCommit
+              - codecommit:GetUploadArchiveStatus
+              - codecommit:UploadArchive
+              - codedeploy:CreateDeployment
+              - codedeploy:GetApplication
+              - codedeploy:GetApplicationRevision
+              - codedeploy:GetDeployment
+              - codedeploy:GetDeploymentConfig
+              - codedeploy:RegisterApplicationRevision
+              - codestar-connections:UseConnection
+              - devicefarm:CreateUpload
+              - devicefarm:GetRun
+              - devicefarm:GetUpload
+              - devicefarm:ListDevicePools
+              - devicefarm:ListProjects
+              - devicefarm:ScheduleRun
+              - ecr:DescribeImages
               - lambda:InvokeFunction
               - lambda:ListFunctions
-            Effect: Allow
-            Resource: ['*']
-          - Sid: OpsWorksLimitedAccess
-            Action:
               - opsworks:CreateDeployment
               - opsworks:DescribeApps
               - opsworks:DescribeCommands
@@ -90,31 +83,6 @@ Resources:
               - opsworks:DescribeStacks
               - opsworks:UpdateApp
               - opsworks:UpdateStack
-            Effect: Allow
-            Resource: ['*']
-          - Sid: CodeBuildLimitedAccess
-            Action:
-              - codebuild:BatchGetBuilds
-              - codebuild:StartBuild
-            Effect: Allow
-            Resource: ['*']
-          - Sid: EcrLimitedAccess
-            Action:
-              - ecr:DescribeImages
-            Effect: Allow
-            Resource: ['*']
-          - Sid: DeviceFormLimitedAccess
-            Action:
-              - devicefarm:CreateUpload
-              - devicefarm:GetRun
-              - devicefarm:GetUpload
-              - devicefarm:ListDevicePools
-              - devicefarm:ListProjects
-              - devicefarm:ScheduleRun
-            Effect: Allow
-            Resource: ['*']
-          - Sid: ServiceCatalogLimitedAccess
-            Action:
               - servicecatalog:CreateProvisioningArtifact
               - servicecatalog:DeleteProvisioningArtifact
               - servicecatalog:DescribeProvisioningArtifact
