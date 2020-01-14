@@ -28,8 +28,8 @@ Parameters:
 
   ArtifactsUseBuildId:
     AllowedValues: ['true', 'false']
-    Default: 'true'
-    Description: 'Along with ArtifactsName and ArtifactsPath, the pattern that AWS CodeBuild uses to name and store the output artifact'
+    Default: 'false'
+    Description: 'Along with ArtifactsName and ArtifactsPath, the pattern that AWS CodeBuild uses to name and store the output artifact (default: false)'
     Type: String
 
   BadgeEnabled:
@@ -119,8 +119,8 @@ Parameters:
 
   ZipArtifacts:
     AllowedValues: ['true', 'false']
-    Default: 'true'
-    Description: 'If ArtifactsType is set to S3, valid values include: false - AWS CodeBuild creates in the output bucket a folder that contains the build output.  true: AWS CodeBuild creates in the output bucket a ZIP file that contains the build output (default: true)'
+    Default: 'false'
+    Description: 'If ArtifactsType is set to S3, valid values include: false - AWS CodeBuild creates in the output bucket a folder that contains the build output.  true: AWS CodeBuild creates in the output bucket a ZIP file that contains the build output (default: false)'
     Type: String
 
 
