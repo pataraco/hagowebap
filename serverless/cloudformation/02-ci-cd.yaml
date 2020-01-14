@@ -27,6 +27,16 @@ stacks:
       Name: ${namespace}-${environment}
       SourceVersion: ${environment}
 
+  - name: codepipeline-iam-managed-policy-${environment}
+    enabled: false
+    template_path: templates/iam-managed-policy-codepipeline.yaml
+    tags:
+      <<: *common_tags
+    variables:
+      <<: *common_vars
+      Name: ${namespace}-${environment}
+
+  # TODO: finish the codepipeline template
   - name: codepipeline-pipeline-${environment}
     enabled: false
     template_path: templates/codepipeline-pipeline.yaml
@@ -34,3 +44,7 @@ stacks:
       <<: *common_tags
     variables:
       <<: *common_vars
+      Name: ${namespace}-${environment}
+      ManagedPolicyArn: ${output codepipeline-iam-managed-policy-${environment}::IamManagedPolicyArn}
+
+  # TODO: add codepipeline webhooks resource
