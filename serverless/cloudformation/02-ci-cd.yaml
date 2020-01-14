@@ -6,15 +6,15 @@ common_tags: &common_tags
 common_vars: &common_vars
   Environment: ${environment}
   Project: ${project}
-namespace: ${namespace}
-stacker_bucket: ${stacker_bucket_name}
+namespace: ${project}
+stacker_bucket: ${project}-cloudformation-${environment}
 sys_path: ./
 
 stacks:
 
   # create AWS CodeBuild project to deploy Lambda/API via Serverless
   - name: codebuild-project-${environment}
-    template_path: templates/codebuild-project.yaml
+    template_path: templates/codebuild-project-github.yaml
     enabled: true
     tags:
       <<: *common_tags
@@ -22,9 +22,9 @@ stacks:
       <<: *common_vars
       BadgeEnabled: true
       BuildSpec: buildspec.yaml
-      Description: ${namespace} serverless build and deployment for ${environment}
+      Description: ${project} serverless build and deployment for ${environment}
       GitHubLocation: https://github.com/AutoGravity/turncar-backend-testing
-      Name: ${namespace}-${environment}
+      Name: ${project}-${environment}
       SourceVersion: ${environment}
 
   - name: codepipeline-iam-managed-policy-${environment}
@@ -34,7 +34,7 @@ stacks:
       <<: *common_tags
     variables:
       <<: *common_vars
-      Name: ${namespace}-${environment}
+      Name: ${project}-${environment}
 
   # TODO: finish the codepipeline template
   - name: codepipeline-pipeline-${environment}
@@ -44,7 +44,7 @@ stacks:
       <<: *common_tags
     variables:
       <<: *common_vars
-      Name: ${namespace}-${environment}
+      Name: ${project}-${environment}
       ManagedPolicyArn: ${output codepipeline-iam-managed-policy-${environment}::IamManagedPolicyArn}
 
   # TODO: add codepipeline webhooks resource
