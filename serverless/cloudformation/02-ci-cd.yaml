@@ -21,9 +21,9 @@ stacks:
     variables:
       <<: *common_vars
       BadgeEnabled: true
-      BuildSpec: buildspec.yaml
+      BuildSpec: serverless/buildspec.yaml
       Description: ${project} serverless build and deployment for ${environment}
-      GitHubLocation: https://github.com/AutoGravity/turncar-backend-testing
+      GitHubLocation: https://github.com/pataraco/hagowebapp
       Name: ${project}-${environment}
       SourceVersion: ${environment}
 
