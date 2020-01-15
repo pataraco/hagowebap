@@ -1,0 +1,16 @@
+{
+  "name": "hagowebapp-sls",
+  "version": "1.0.0",
+  "description": "HA Go Web Application - Serverless",
+  "main": "index.html",
+  "dependencies": {},
+  "devDependencies": {
+    "serverless-offline": "^5.12.1",
+    "serverless-pseudo-parameters": "^2.5.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "PAR",
+  "license": "ISC"
+}
