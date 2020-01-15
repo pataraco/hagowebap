@@ -10,6 +10,7 @@ phases:
   pre_build:
     commands:
       - echo "Installing source NPM dependencies..."
+      - cd serverless
       - npm install
   build:
     commands:
