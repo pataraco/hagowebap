@@ -2,8 +2,8 @@ version: 0.2
 
 phases:
   install:
-    runtime-versions:
-      golang: 1.13
+#   runtime-versions:
+#     golang: 1.13
     commands:
       - echo "Installing Serverless..."
       - pwd
