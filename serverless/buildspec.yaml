@@ -8,14 +8,12 @@ phases:
     commands:
       - echo "Installing Serverless..."
       - pwd
+      - which node && node --version
+      - which npm && npm -v
       - npm install -g serverless
-      - sls -v
-      - serverless -v
-      - which sls
-      - which serverless
-      - go version
-      - npm -v
-      - node --version
+      - which sls && sls -v
+      - which serverless && serverless -v
+      - which go && go version
       - ls
   pre_build:
     commands:
@@ -30,7 +28,7 @@ phases:
       - echo "Build started on `date`"
       - echo "Deploying with Serverless Framework..."
       - pwd
-      - sls deploy -v -s $ENVIRONMENT
+      - serverless deploy -v -s $ENVIRONMENT
   post_build:
     commands:
       - echo "Build completed on `date`"
