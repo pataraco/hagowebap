@@ -7,7 +7,7 @@ common_vars: &common_vars
   Environment: ${environment}
   Project: ${project}
 namespace: ${project}
-stacker_bucket: ${project}-cloudformation-${environment}
+stacker_bucket: ${project}-cloudformation-${region}-${environment}
 sys_path: ./
 
 stacks:
