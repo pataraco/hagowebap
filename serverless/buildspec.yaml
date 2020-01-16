@@ -6,16 +6,21 @@ phases:
       golang: 1.13
     commands:
       - echo "Installing Serverless..."
+      - pwd
+      - npm -v
       - npm install -g serverless
   pre_build:
     commands:
       - echo "Installing source NPM dependencies..."
+      - pwd
       - cd serverless
+      - pwd
       - npm install
   build:
     commands:
       - echo "Build started on `date`"
       - echo "Deploying with Serverless Framework..."
+      - pwd
       - sls deploy -v -s $ENVIRONMENT
   post_build:
     commands:
