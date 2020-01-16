@@ -8,12 +8,12 @@ phases:
     commands:
       - echo "Installing Serverless..."
       - pwd
-      - which node && node --version
-      - which npm && npm -v
+      - command -v node && node --version
+      - command -v npm && npm -v
       - npm install -g serverless
-      - which sls && sls -v
-      - which serverless && serverless -v
-      - which go && go version
+      # command -v sls && sls -v
+      - command -v serverless && serverless -v
+      - command -v go && go version
       - ls
   pre_build:
     commands:
