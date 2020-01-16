@@ -11,6 +11,8 @@ phases:
       - command -v node && node --version
       - command -v npm && npm -v
       - npm install -g serverless
+      - npm install -g serverless
+      - npm install -g serverless
       # command -v sls && sls -v
       - command -v serverless && serverless -v
       - command -v go && go version
