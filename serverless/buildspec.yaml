@@ -3,16 +3,16 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      # golang: 1.13
+      golang: 1.13
       nodejs: 12
     commands:
       - echo "Installing Serverless..."
+      - npm install -g serverless
       - pwd
+      - sudo npm install -g serverless
       - command -v node && node --version
       - command -v npm && npm -v
-      - npm install -g serverless
-      - npm install -g serverless
-      - npm install -g serverless
+      - npm install serverless
       # command -v sls && sls -v
       - command -v serverless && serverless -v
       - command -v go && go version
