@@ -7,14 +7,17 @@ phases:
     commands:
       - echo "Installing Serverless..."
       - pwd
-      - npm -v
       - npm install -g serverless
+      - go version
+      - npm -v
+      - ls
   pre_build:
     commands:
       - echo "Installing source NPM dependencies..."
       - pwd
       - cd serverless
       - pwd
+      - ls
       - npm install
   build:
     commands:

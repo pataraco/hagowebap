@@ -23,6 +23,7 @@ stacks:
       BadgeEnabled: true
       BuildSpec: serverless/buildspec.yaml
       Description: ${project} serverless build and deployment for ${environment}
+      EnvironmentImage: aws/codebuild/standard:2.0
       GitHubLocation: https://github.com/pataraco/hagowebapp
       Name: ${project}-${environment}
       SourceVersion: ${environment}
