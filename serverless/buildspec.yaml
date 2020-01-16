@@ -9,6 +9,10 @@ phases:
       - echo "Installing Serverless..."
       - pwd
       - npm install -g serverless
+      - sls -v
+      - serverless -v
+      - which sls
+      - which serverless
       - go version
       - npm -v
       - node --version
